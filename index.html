@@ -14,9 +14,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
 <style>
 /*
-  Concept: the page follows the BGM.
-  The header and hero are one color field that switches with the demo state
-  (explore = ultramarine, battle = raspberry), on the bar line, like the music.
+  The header and hero are one ultramarine color field.
   Everything below stays quiet: paper, ink, thin rules, a sticky heading column.
 */
 :root {
@@ -104,43 +102,6 @@ h1 .en {
 }
 .hero .chips { justify-content: flex-end; }
 .hero .chips span { border-color: color-mix(in srgb, var(--on-state) 45%, transparent); color: var(--on-state); }
-
-/* demo */
-.demo {
-  border-radius: 20px; padding: 24px; display: grid; gap: 18px;
-  background: color-mix(in srgb, var(--on-state) 9%, transparent);
-  border: 1px solid color-mix(in srgb, var(--on-state) 22%, transparent);
-}
-.demo-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px 16px; flex-wrap: wrap; }
-.demo-title { font-family: var(--display); font-weight: 700; font-stretch: 115%; font-size: 20px; }
-.demo-spec { display: flex; gap: 14px; font-family: var(--display); font-size: 14px; opacity: .8; font-variant-numeric: tabular-nums; }
-.demo-body { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center; }
-.play-big {
-  width: 72px; height: 72px; border-radius: 50%; border: 0; cursor: pointer;
-  background: var(--on-state); color: var(--state); display: grid; place-items: center;
-  transition: transform .15s, color .6s ease;
-}
-.play-big:hover { transform: scale(1.05); }
-.play-big svg { width: 26px; height: 26px; fill: currentColor; }
-canvas#wave { width: 100%; height: 88px; display: block; }
-.demo-ctrl { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
-.seg {
-  display: inline-flex; border-radius: 999px; padding: 4px; gap: 4px;
-  border: 1px solid color-mix(in srgb, var(--on-state) 40%, transparent);
-}
-.seg button {
-  font: 500 15px var(--body); border: 0; border-radius: 999px; padding: 6px 20px; cursor: pointer;
-  background: transparent; color: color-mix(in srgb, var(--on-state) 80%, transparent);
-  transition: color .6s ease;
-}
-.seg button[aria-pressed="true"] { background: var(--on-state); color: var(--state); }
-.seg button.queued { outline: 1px dashed var(--on-state); outline-offset: -1px; color: var(--on-state); }
-.beats { display: flex; gap: 8px; align-items: center; font-family: var(--display); font-size: 14px; font-variant-numeric: tabular-nums; }
-.beats #barNo { min-width: 4.2em; opacity: .85; }
-.beats i { width: 10px; height: 10px; border-radius: 50%; display: block; background: color-mix(in srgb, var(--on-state) 28%, transparent); }
-.beats i.on { background: var(--on-state); }
-.status { font-size: 14px; min-height: 1.8em; opacity: .9; }
-.status b { font-weight: 700; }
 
 /* sections: sticky heading column on the left, content on the right */
 .sec .wrap {
@@ -283,10 +244,6 @@ footer .wrap {
 @media (max-width: 560px) {
   .hero .wrap { padding-block: 32px 40px; gap: 32px; }
   h1 .en { font-stretch: 100%; font-size: clamp(48px, 16vw, 80px); }
-  .demo { padding: 18px; border-radius: 16px; }
-  .demo-body { gap: 16px; }
-  .play-big { width: 60px; height: 60px; }
-  canvas#wave { height: 64px; }
   .credit { grid-template-columns: 64px minmax(0, 1fr); gap: 4px 16px; }
   .credit .yr { font-size: 18px; font-stretch: 100%; }
   .credit p { grid-column: 2; }
@@ -324,29 +281,9 @@ footer .wrap {
       <div class="hero-meta">
         <p>ゲームの状況に合わせて BGM や効果音が切り替わる、動的なサウンド制御の設計と実装が得意です。曲を作るところから、Unity と C# でゲームに組み込むところまで一人でできます。</p>
         <div class="chips">
-          <span>Unity</span><span>C#</span><span>Dynamic Audio</span><span>Logic Pro</span>
+          <span>Unity</span><span>C#</span><span>Logic Pro</span>
         </div>
       </div>
-
-      <div class="demo" aria-label="動的BGMデモ">
-        <div class="demo-head">
-          <span class="demo-title">Dynamic BGM Demo</span>
-          <span class="demo-spec"><span>120 BPM</span><span>4/4</span><span>A minor</span></span>
-        </div>
-        <div class="demo-body">
-          <button class="play-big" id="play" aria-label="再生">
-            <svg viewBox="0 0 24 24" id="playIcon"><path d="M7 4l13 8-13 8z"/></svg>
-          </button>
-          <canvas id="wave" aria-hidden="true"></canvas>
-        </div>
-        <div class="demo-ctrl">
-          <div class="seg" role="group" aria-label="ゲームの状況">
-            <button id="sExplore" aria-pressed="true">探索</button>
-            <button id="sBattle" aria-pressed="false">戦闘</button>
-          </div>
-          <div class="beats" id="beats"><span id="barNo">Bar --</span><i></i><i></i><i></i><i></i></div>
-        </div>
-        <div class="status" id="status" aria-live="polite">再生して「探索」「戦闘」を切り替えてみてください。曲は次の小節の頭で切り替わります。</div>
       </div>
     </div>
   </section>
@@ -520,156 +457,7 @@ footer .wrap {
 
 <script>
 (() => {
-  // Dynamic BGM demo: an intro bar, then a 4-bar loop. State changes are queued and applied on the next bar line.
-  const BPM = 120, BEAT = 60 / BPM, BAR = BEAT * 4;
-  const CHORDS = [[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]; // Am F C G
-  const MEL = [[76, null, 72, null, 74, null, 72, 69], [69, null, null, 72, 71, null, 69, null],
-               [67, null, 72, null, 76, null, 74, 72], [71, null, null, null, 74, null, null, null]];
-
-  let ctx, master, analyser, noiseBuf, timer = null, playing = false;
-  let state = "explore", queued = null, bar = 0, nextBar = 0;
-  const visual = []; // {t, bar, beat, state}
-  const midi = n => 440 * Math.pow(2, (n - 69) / 12);
-
-  function ensureAudio() {
-    if (ctx) return;
-    ctx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = ctx.createAnalyser(); analyser.fftSize = 1024;
-    analyser.connect(ctx.destination);
-    noiseBuf = ctx.createBuffer(1, ctx.sampleRate * 0.2, ctx.sampleRate);
-    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-  }
-  function tone(freq, t, dur, type, vol, attack = 0.02) {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = type; o.frequency.value = freq;
-    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(vol, t + attack);
-    g.gain.exponentialRampToValueAtTime(0.0008, t + dur);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.05);
-  }
-  function kick(t) {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(40, t + 0.15);
-    g.gain.setValueAtTime(0.7, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
-    o.connect(g); g.connect(master); o.start(t); o.stop(t + 0.3);
-  }
-  function hat(t, vol) {
-    const s = ctx.createBufferSource(), f = ctx.createBiquadFilter(), g = ctx.createGain();
-    s.buffer = noiseBuf; f.type = "highpass"; f.frequency.value = 7000;
-    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
-    s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t + 0.06);
-  }
-  function scheduleBar(t, n) {
-    if (n === 0) { // intro: a single swelling chord
-      CHORDS[0].forEach(m => tone(midi(m), t, BAR, "sine", 0.12, 0.8));
-      tone(midi(45), t, BAR, "triangle", 0.2, 0.5);
-      return;
-    }
-    const i = (n - 1) % 4, ch = CHORDS[i];
-    if (state === "explore") {
-      ch.forEach(m => tone(midi(m), t, BAR, "sine", 0.1, 0.15));
-      tone(midi(ch[0] - 12), t, BAR * 0.9, "triangle", 0.22);
-      MEL[i].forEach((m, k) => { if (m != null) tone(midi(m), t + k * BEAT / 2, BEAT * 0.9, "triangle", 0.16); });
-    } else {
-      ch.forEach(m => tone(midi(m), t, BAR, "sawtooth", 0.035, 0.01));
-      for (let k = 0; k < 8; k++) {
-        tone(midi(ch[0] - 24), t + k * BEAT / 2, BEAT / 2 * 0.8, "sawtooth", 0.09, 0.005);
-        tone(midi(ch[k % 3] + 12), t + k * BEAT / 2, BEAT / 2 * 0.7, "square", 0.04, 0.005);
-        hat(t + k * BEAT / 2, k % 2 ? 0.12 : 0.06);
-      }
-      for (let b = 0; b < 4; b++) kick(t + b * BEAT);
-    }
-  }
-  function scheduler() {
-    while (nextBar < ctx.currentTime + 0.2) {
-      if (bar > 0 && queued) { state = queued; queued = null; }
-      scheduleBar(nextBar, bar);
-      for (let b = 0; b < 4; b++) visual.push({ t: nextBar + b * BEAT, bar, beat: b, state });
-      nextBar += BAR; bar++;
-    }
-  }
-
   const $ = id => document.getElementById(id);
-  const playBtn = $("play"), playIcon = $("playIcon"), statusEl = $("status"), beatsEl = $("beats"), barNo = $("barNo");
-  const btnE = $("sExplore"), btnB = $("sBattle"), dots = beatsEl.querySelectorAll("i");
-  const NAMES = { explore: "探索", battle: "戦闘" };
-
-  function setStatus(html) { statusEl.innerHTML = html; }
-  function start() {
-    pauseTracks();
-    ensureAudio(); if (ctx.state === "suspended") ctx.resume();
-    // fresh bus per run, so tails from a stopped run never come back
-    master = ctx.createGain(); master.gain.value = 0.25; master.connect(analyser);
-    bar = 0; visual.length = 0; nextBar = ctx.currentTime + 0.05;
-    playing = true; scheduler(); timer = setInterval(scheduler, 25);
-    playIcon.innerHTML = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>'; playBtn.setAttribute("aria-label", "停止");
-  }
-  function stop() {
-    playing = false; clearInterval(timer); queued = null;
-    const old = master; old.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
-    setTimeout(() => old.disconnect(), 400);
-    playIcon.innerHTML = '<path d="M7 4l13 8-13 8z"/>'; playBtn.setAttribute("aria-label", "再生");
-    barNo.textContent = "Bar --"; dots.forEach(d => d.classList.remove("on")); syncButtons();
-    setStatus("停止しました。");
-  }
-  playBtn.addEventListener("click", () => playing ? stop() : start());
-
-  function request(s) {
-    if (!playing) { state = s; queued = null; syncButtons(); start(); return; }
-    queued = (s === state) ? null : s;
-    syncButtons();
-    if (queued) setStatus(`切り替え待ち：<b>${NAMES[state]} → ${NAMES[queued]}</b>（次の小節の頭で切り替わります）`);
-  }
-  btnE.addEventListener("click", () => request("explore"));
-  btnB.addEventListener("click", () => request("battle"));
-  function syncButtons() {
-    [[btnE, "explore"], [btnB, "battle"]].forEach(([b, s]) => {
-      b.setAttribute("aria-pressed", String(s === state)); b.classList.toggle("queued", s === queued);
-    });
-    // the page color follows the music state
-    document.documentElement.dataset.state = state;
-  }
-
-  // Visual clock: follows the audio clock, not setInterval, so the UI lands on the beat
-  let shownState = null, shownBar = -1;
-  function tick() {
-    if (playing && ctx) {
-      while (visual.length && visual[0].t <= ctx.currentTime) {
-        const v = visual.shift();
-        dots.forEach((d, k) => d.classList.toggle("on", k === v.beat));
-        if (v.bar !== shownBar) {
-          shownBar = v.bar; barNo.textContent = v.bar === 0 ? "Intro" : "Bar " + (((v.bar - 1) % 4) + 1);
-          if (v.state !== shownState || v.bar <= 1) {
-            shownState = v.state;
-            syncButtons();
-            setStatus(v.bar === 0 ? "<b>Intro</b> を再生中。このあとループに入ります。"
-              : `<b>${NAMES[v.state]}</b> のループを再生中。`);
-          }
-        }
-      }
-    } else { shownBar = -1; shownState = null; }
-    draw(); requestAnimationFrame(tick);
-  }
-
-  const cv = $("wave"), g2 = cv.getContext("2d");
-  const rest = Array.from({ length: 96 }, (_, k) => 0.25 + 0.6 * Math.abs(Math.sin(k * 0.37) * Math.cos(k * 0.11 + 1)));
-  function draw() {
-    const dpr = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
-    if (cv.width !== Math.round(w * dpr) || cv.height !== Math.round(h * dpr)) { cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr); }
-    g2.setTransform(dpr, 0, 0, dpr, 0, 0); g2.clearRect(0, 0, w, h);
-    const col = getComputedStyle(document.documentElement).getPropertyValue("--on-state").trim() || "#fff";
-    const bars = Math.max(24, Math.floor(w / 7)), bw = w / bars;
-    let data = null;
-    if (playing && analyser) { data = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(data); }
-    g2.fillStyle = col; g2.globalAlpha = data ? 0.95 : 0.32;
-    for (let k = 0; k < bars; k++) {
-      let v = rest[k % rest.length];
-      if (data) v = 0.06 + (data[Math.floor(k / bars * data.length * 0.4)] / 255) * 0.94;
-      const bh = Math.max(3, v * h);
-      g2.fillRect(k * bw + 1, (h - bh) / 2, Math.max(1, bw - 3), bh);
-    }
-    g2.globalAlpha = 1;
-  }
-  requestAnimationFrame(tick);
 
   $("copyMail").addEventListener("click", e => {
     const btn = e.currentTarget, el = $("mail");
@@ -682,7 +470,7 @@ footer .wrap {
     catch (_) { fallback(); }
   });
 
-  // Music tracks: one sound at a time across the tracks and the demo
+  // Music tracks: only one plays at a time
   const tracks = [...document.querySelectorAll(".track")];
   const fmt = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}` : "0:00";
   const PLAY = '<path d="M7 4l13 8-13 8z"/>', PAUSE = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
@@ -697,7 +485,7 @@ footer .wrap {
     const show = p => { seek.value = Math.round(p * 1000); seek.style.setProperty("--p", p * 100 + "%"); };
 
     btn.addEventListener("click", () => {
-      if (a.paused) { if (playing) stop(); pauseTracks(a); a.play(); } else a.pause();
+      if (a.paused) { pauseTracks(a); a.play(); } else a.pause();
     });
     a.addEventListener("play", () => { svg.innerHTML = PAUSE; btn.setAttribute("aria-label", `「${name}」を一時停止`); t.classList.add("is-playing"); });
     a.addEventListener("pause", () => { svg.innerHTML = PLAY; btn.setAttribute("aria-label", `「${name}」を再生`); t.classList.remove("is-playing"); });
