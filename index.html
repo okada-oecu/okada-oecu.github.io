@@ -185,6 +185,40 @@ h2 {
 .pair .work + .work { padding: 0 0 0 32px; border-left: 1px solid var(--rule); }
 .pair .aside { margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 13px; }
 
+/* music */
+.track {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center;
+  padding-block: 24px; border-bottom: 1px solid var(--rule);
+}
+.track:first-child { padding-top: 4px; }
+.t-play {
+  width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--state); color: var(--on-state); display: grid; place-items: center;
+  transition: background-color .6s ease, transform .15s;
+}
+.t-play:hover { transform: scale(1.05); }
+.t-play svg { width: 20px; height: 20px; fill: currentColor; }
+.t-main { display: grid; gap: 12px; }
+.t-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap; }
+.t-title {
+  margin: 0; font-family: var(--display); font-weight: 800; font-stretch: 112%;
+  font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -.02em; line-height: 1.25;
+}
+.t-from { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.t-time { font-family: var(--display); font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track.is-playing .t-time { color: var(--ink); }
+.t-seek {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 6px; margin: 6px 0; border-radius: 3px; cursor: pointer;
+  background: linear-gradient(var(--accent), var(--accent)) 0 / var(--p, 0%) 100% no-repeat, var(--paper-2);
+}
+.t-seek::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; border: 0;
+  background: var(--accent); opacity: 0; transition: opacity .15s;
+}
+.t-seek::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; border: 0; background: var(--accent); opacity: 0; }
+.t-seek:hover::-webkit-slider-thumb, .t-seek:focus-visible::-webkit-slider-thumb, .track.is-playing .t-seek::-webkit-slider-thumb { opacity: 1; }
+.t-seek:hover::-moz-range-thumb, .t-seek:focus-visible::-moz-range-thumb, .track.is-playing .t-seek::-moz-range-thumb { opacity: 1; }
+
 /* skills */
 .skills { display: grid; gap: 56px; }
 .group-title { margin: 0 0 8px; font-family: var(--display); font-weight: 600; font-stretch: 110%; font-size: 15px; color: var(--muted); }
@@ -271,6 +305,7 @@ footer .wrap {
     <a class="logo" href="#top">OKADA MISEI</a>
     <nav>
       <a href="#works">Works</a>
+      <a href="#music">Music</a>
       <a href="#skills">Skills</a>
       <a href="#about">About</a>
       <a href="#activities">Activities</a>
@@ -364,6 +399,39 @@ footer .wrap {
             <a class="w-link" href="https://daifugo-roguelike.onrender.com/" target="_blank" rel="noopener">ブラウザで遊ぶ</a>
             <p class="role aside">ほかの個人開発：Unity の小規模アクションゲームと BGM（BGM の遷移やインタラクティブな音の演出をプログラムで組み込み）、Unreal Engine の簡単な 3D アクションゲーム。自分が楽しいと思えるもの、心が動くものを作るのが動機です。</p>
           </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="music">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Music</h2>
+        <p class="note">楽曲作品</p>
+      </div>
+      <div class="tracks">
+        <div class="track">
+          <button class="t-play" aria-label="「ボス フェーズ3 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+          <div class="t-main">
+            <div class="t-head">
+              <div><h3 class="t-title">ボス フェーズ3 BGM</h3><p class="t-from">Twin-kleklekle-Twin-Punch</p></div>
+              <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:27</span></span>
+            </div>
+            <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「ボス フェーズ3 BGM」の再生位置">
+          </div>
+          <audio preload="metadata" src="audio/twin-punch-boss-phase3.m4a"></audio>
+        </div>
+        <div class="track">
+          <button class="t-play" aria-label="「バトルBGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+          <div class="t-main">
+            <div class="t-head">
+              <div><h3 class="t-title">バトルBGM</h3></div>
+              <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:23</span></span>
+            </div>
+            <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「バトルBGM」の再生位置">
+          </div>
+          <audio preload="metadata" src="audio/battle-bgm.m4a"></audio>
         </div>
       </div>
     </div>
@@ -527,6 +595,7 @@ footer .wrap {
 
   function setStatus(html) { statusEl.innerHTML = html; }
   function start() {
+    pauseTracks();
     ensureAudio(); if (ctx.state === "suspended") ctx.resume();
     // fresh bus per run, so tails from a stopped run never come back
     master = ctx.createGain(); master.gain.value = 0.25; master.connect(analyser);
@@ -611,6 +680,40 @@ footer .wrap {
     };
     try { navigator.clipboard.writeText(el.textContent).then(() => done("コピーしました"), fallback); }
     catch (_) { fallback(); }
+  });
+
+  // Music tracks: one sound at a time across the tracks and the demo
+  const tracks = [...document.querySelectorAll(".track")];
+  const fmt = s => isFinite(s) ? `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}` : "0:00";
+  const PLAY = '<path d="M7 4l13 8-13 8z"/>', PAUSE = '<path d="M6 4h4v16H6zM14 4h4v16h-4z"/>';
+  function pauseTracks(except) {
+    tracks.forEach(t => { const a = t.querySelector("audio"); if (a !== except && !a.paused) a.pause(); });
+  }
+  tracks.forEach(t => {
+    const a = t.querySelector("audio"), btn = t.querySelector(".t-play"), svg = btn.querySelector("svg");
+    const seek = t.querySelector(".t-seek"), cur = t.querySelector(".cur"), dur = t.querySelector(".dur");
+    const name = t.querySelector(".t-title").textContent;
+    let seeking = false;
+    const show = p => { seek.value = Math.round(p * 1000); seek.style.setProperty("--p", p * 100 + "%"); };
+
+    btn.addEventListener("click", () => {
+      if (a.paused) { if (playing) stop(); pauseTracks(a); a.play(); } else a.pause();
+    });
+    a.addEventListener("play", () => { svg.innerHTML = PAUSE; btn.setAttribute("aria-label", `「${name}」を一時停止`); t.classList.add("is-playing"); });
+    a.addEventListener("pause", () => { svg.innerHTML = PLAY; btn.setAttribute("aria-label", `「${name}」を再生`); t.classList.remove("is-playing"); });
+    a.addEventListener("loadedmetadata", () => { dur.textContent = fmt(a.duration); });
+    a.addEventListener("timeupdate", () => {
+      if (seeking) return;
+      show(a.duration ? a.currentTime / a.duration : 0); cur.textContent = fmt(a.currentTime);
+    });
+    a.addEventListener("ended", () => { a.currentTime = 0; });
+    seek.addEventListener("input", () => {
+      seeking = true; const p = seek.value / 1000; show(p);
+      if (a.duration) cur.textContent = fmt(p * a.duration);
+    });
+    seek.addEventListener("change", () => {
+      seeking = false; if (a.duration) a.currentTime = seek.value / 1000 * a.duration;
+    });
   });
 })();
 </script>
