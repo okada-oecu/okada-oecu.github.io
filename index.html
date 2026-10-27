@@ -153,36 +153,43 @@ h2 {
 .plain .aside { margin-top: 8px; padding-top: 14px; border-top: 1px solid var(--rule); font-size: 13px; max-width: 40em; }
 
 /* music */
-.track {
-  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: center;
-  padding-block: 24px; border-bottom: 1px solid var(--rule);
+.t-group + .t-group { margin-top: 56px; }
+.t-group-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap;
+  padding-bottom: 12px; border-bottom: 1px solid var(--ink);
 }
-.track:first-child { padding-top: 4px; }
-.t-play {
-  width: 56px; height: 56px; border-radius: 50%; border: 0; cursor: pointer;
-  background: var(--state); color: var(--on-state); display: grid; place-items: center;
-  transition: background-color .6s ease, transform .15s;
-}
-.t-play:hover { transform: scale(1.05); }
-.t-play svg { width: 20px; height: 20px; fill: currentColor; }
-.t-main { display: grid; gap: 12px; }
-.t-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 16px; flex-wrap: wrap; }
-.t-title {
+.t-group-head h3 {
   margin: 0; font-family: var(--display); font-weight: 800; font-stretch: 112%;
-  font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -.02em; line-height: 1.25;
+  font-size: clamp(20px, 2.2vw, 26px); letter-spacing: -.02em; line-height: 1.2;
 }
-.t-from { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
-.t-time { font-family: var(--display); font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.track.is-playing .t-time { color: var(--ink); }
+.t-group-head p { margin: 0; display: flex; gap: 14px; font-size: 13px; color: var(--muted); }
+.track {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center;
+  padding-block: 14px; border-bottom: 1px solid var(--rule);
+}
+.t-play {
+  width: 44px; height: 44px; border-radius: 50%; border: 0; cursor: pointer;
+  background: var(--state); color: var(--on-state); display: grid; place-items: center;
+  transition: transform .15s;
+}
+.t-play:hover { transform: scale(1.06); }
+.t-play svg { width: 16px; height: 16px; fill: currentColor; }
+.t-main { display: grid; gap: 6px; }
+.t-head { display: flex; justify-content: space-between; align-items: baseline; gap: 2px 16px; }
+.t-title { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.5; }
+.w-sub { display: block; margin-top: 4px; font-family: var(--body); font-size: 15px; font-weight: 700; font-stretch: 100%; letter-spacing: .04em; color: var(--muted); }
+.t-sub { margin-left: 6px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.t-time { flex: none; font-family: var(--display); font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track.is-playing .t-title, .track.is-playing .t-time { color: var(--accent); }
 .t-seek {
-  -webkit-appearance: none; appearance: none; width: 100%; height: 6px; margin: 6px 0; border-radius: 3px; cursor: pointer;
+  -webkit-appearance: none; appearance: none; width: 100%; height: 4px; margin: 4px 0; border-radius: 2px; cursor: pointer;
   background: linear-gradient(var(--accent), var(--accent)) 0 / var(--p, 0%) 100% no-repeat, var(--paper-2);
 }
 .t-seek::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; border: 0;
+  -webkit-appearance: none; width: 12px; height: 12px; border-radius: 50%; border: 0;
   background: var(--accent); opacity: 0; transition: opacity .15s;
 }
-.t-seek::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; border: 0; background: var(--accent); opacity: 0; }
+.t-seek::-moz-range-thumb { width: 12px; height: 12px; border-radius: 50%; border: 0; background: var(--accent); opacity: 0; }
 .t-seek:hover::-webkit-slider-thumb, .t-seek:focus-visible::-webkit-slider-thumb, .track.is-playing .t-seek::-webkit-slider-thumb { opacity: 1; }
 .t-seek:hover::-moz-range-thumb, .t-seek:focus-visible::-moz-range-thumb, .track.is-playing .t-seek::-moz-range-thumb { opacity: 1; }
 
@@ -325,7 +332,7 @@ footer .wrap {
         <article class="work media">
           <figure class="shot"><img src="images/stayinguplay.webp" width="1000" height="1000" loading="lazy" alt="Stayinguplay! のキービジュアル。タイトル画面を映した携帯ゲーム機と、暗いドアの陰からのぞく親"></figure>
           <div class="m-text">
-            <h3>Stayinguplay!</h3>
+            <h3>Stayinguplay! <span class="w-sub">よふかしあそび</span></h3>
             <div class="w-meta"><span>BitSummit GameJam</span><span>2D / 3D</span><span>ステルスアクション</span></div>
             <p>親にバレないように携帯ゲーム機を操作して、ハイスコアを目指すマルチタスク・ステルスアクションです。</p>
             <p class="role">担当：<b>プログラマー（途中参加）</b></p>
@@ -356,27 +363,132 @@ footer .wrap {
         <p class="note">楽曲作品</p>
       </div>
       <div class="tracks">
-        <div class="track">
-          <button class="t-play" aria-label="「ボス フェーズ3 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
-          <div class="t-main">
-            <div class="t-head">
-              <div><h3 class="t-title">ボス フェーズ3 BGM</h3><p class="t-from">Twin-kleklekle-Twin-Punch</p></div>
-              <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:27</span></span>
+        <div class="t-group">
+          <div class="t-group-head"><h3>Twin-kleklekle-Twin-Punch</h3><p><span>BitSummit GameJam 2026</span><span>6曲</span></p></div>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch タイトル BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch タイトル BGM">タイトル BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:26</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch タイトル BGM」の再生位置">
             </div>
-            <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「ボス フェーズ3 BGM」の再生位置">
+            <audio preload="none" src="audio/twin-punch-title.mp3"></audio>
           </div>
-          <audio preload="metadata" src="audio/twin-punch-boss-phase3.m4a"></audio>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch チュートリアル BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch チュートリアル BGM">チュートリアル BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:04</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch チュートリアル BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/twin-punch-tutorial.mp3"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ1 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch ボス フェーズ1 BGM">ボス フェーズ1 BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:23</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ1 BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/twin-punch-boss-phase1.mp3"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ2 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch ボス フェーズ2 BGM">ボス フェーズ2 BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:19</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ2 BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/twin-punch-boss-phase2.mp3"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ3 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch ボス フェーズ3 BGM">ボス フェーズ3 BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:27</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch ボス フェーズ3 BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/twin-punch-boss-phase3.m4a"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「Twin-kleklekle-Twin-Punch リザルト BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Twin-kleklekle-Twin-Punch リザルト BGM">リザルト BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:28</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Twin-kleklekle-Twin-Punch リザルト BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/twin-punch-result.mp3"></audio>
+          </div>
         </div>
-        <div class="track">
-          <button class="t-play" aria-label="「バトルBGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
-          <div class="t-main">
-            <div class="t-head">
-              <div><h3 class="t-title">バトルBGM</h3></div>
-              <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:23</span></span>
+        <div class="t-group">
+          <div class="t-group-head"><h3>ほかの楽曲</h3><p><span>5曲</span></p></div>
+          <div class="track">
+            <button class="t-play" aria-label="「Stayinguplay!（よふかしあそび）タイトル BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="Stayinguplay!（よふかしあそび）タイトル BGM">Stayinguplay! タイトル BGM <span class="t-sub">よふかしあそび</span></h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:54</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「Stayinguplay!（よふかしあそび）タイトル BGM」の再生位置">
             </div>
-            <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「バトルBGM」の再生位置">
+            <audio preload="none" src="audio/yofukashi-asobi-title.m4a"></audio>
           </div>
-          <audio preload="metadata" src="audio/battle-bgm.m4a"></audio>
+          <div class="track">
+            <button class="t-play" aria-label="「DungeonTamer ステージ1 BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="DungeonTamer ステージ1 BGM">DungeonTamer ステージ1 BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:46</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「DungeonTamer ステージ1 BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/dungeon-tamer-stage1.m4a"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「バトル BGM」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="バトル BGM">バトル BGM</h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:23</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「バトル BGM」の再生位置">
+            </div>
+            <audio preload="none" src="audio/battle-bgm.m4a"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「あの朝日まで（instrumental）」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="あの朝日まで（instrumental）">あの朝日まで <span class="t-sub">instrumental</span></h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:51</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「あの朝日まで（instrumental）」の再生位置">
+            </div>
+            <audio preload="none" src="audio/ano-asahi-made-instrumental.m4a"></audio>
+          </div>
+          <div class="track">
+            <button class="t-play" aria-label="「大学プロモーション BGM（課題）」を再生"><svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg></button>
+            <div class="t-main">
+              <div class="t-head">
+                <h4 class="t-title" data-name="大学プロモーション BGM（課題）">大学プロモーション BGM <span class="t-sub">課題</span></h4>
+                <span class="t-time"><span class="cur">0:00</span> / <span class="dur">1:33</span></span>
+              </div>
+              <input class="t-seek" type="range" min="0" max="1000" value="0" aria-label="「大学プロモーション BGM（課題）」の再生位置">
+            </div>
+            <audio preload="none" src="audio/university-promo.mp3"></audio>
+          </div>
         </div>
       </div>
     </div>
@@ -488,8 +600,10 @@ footer .wrap {
   tracks.forEach(t => {
     const a = t.querySelector("audio"), btn = t.querySelector(".t-play"), svg = btn.querySelector("svg");
     const seek = t.querySelector(".t-seek"), cur = t.querySelector(".cur"), dur = t.querySelector(".dur");
-    const name = t.querySelector(".t-title").textContent;
-    let seeking = false;
+    const name = t.querySelector(".t-title").dataset.name;
+    let seeking = false, pending = null;
+    // before the file loads, use the listed length so the seek bar still works
+    const total = () => a.duration || dur.textContent.split(":").reduce((m, x) => m * 60 + +x, 0);
     const show = p => { seek.value = Math.round(p * 1000); seek.style.setProperty("--p", p * 100 + "%"); };
 
     btn.addEventListener("click", () => {
@@ -497,7 +611,10 @@ footer .wrap {
     });
     a.addEventListener("play", () => { svg.innerHTML = PAUSE; btn.setAttribute("aria-label", `「${name}」を一時停止`); t.classList.add("is-playing"); });
     a.addEventListener("pause", () => { svg.innerHTML = PLAY; btn.setAttribute("aria-label", `「${name}」を再生`); t.classList.remove("is-playing"); });
-    a.addEventListener("loadedmetadata", () => { dur.textContent = fmt(a.duration); });
+    a.addEventListener("loadedmetadata", () => {
+      dur.textContent = fmt(a.duration);
+      if (pending != null) { a.currentTime = pending * a.duration; pending = null; }
+    });
     a.addEventListener("timeupdate", () => {
       if (seeking) return;
       show(a.duration ? a.currentTime / a.duration : 0); cur.textContent = fmt(a.currentTime);
@@ -505,10 +622,12 @@ footer .wrap {
     a.addEventListener("ended", () => { a.currentTime = 0; });
     seek.addEventListener("input", () => {
       seeking = true; const p = seek.value / 1000; show(p);
-      if (a.duration) cur.textContent = fmt(p * a.duration);
+      cur.textContent = fmt(p * total());
     });
     seek.addEventListener("change", () => {
-      seeking = false; if (a.duration) a.currentTime = seek.value / 1000 * a.duration;
+      seeking = false; const p = seek.value / 1000;
+      if (a.duration) a.currentTime = p * a.duration;
+      else { pending = p; a.preload = "metadata"; a.load(); }
     });
   });
 })();
